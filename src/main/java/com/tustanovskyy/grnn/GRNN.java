@@ -20,7 +20,7 @@ public class GRNN {
 
 	private String[] minTestVector;
 
-	private List<Double> newSigmas;
+	private List<List<Double>> newSigmas;
 
 	private List<String[]> linesTestInputMinToTrain;
 	private List<String[]> linesTrainInputMinToTrain;
@@ -35,6 +35,26 @@ public class GRNN {
 	private List<List<Double>> evklidDistance = new ArrayList<List<Double>>();
 
 	private final Logger LOGGER = Logger.getLogger(GRNN.class);
+
+	private String[] nearestVector;
+
+	private List<List<Double>> newGausianDistances;
+
+	public String[] getNearestVector() {
+		return nearestVector;
+	}
+
+	public void setNearestVector(String[] nearestVector) {
+		this.nearestVector = nearestVector;
+	}
+
+	public List<List<Double>> getNewGausianDistances() {
+		return newGausianDistances;
+	}
+
+	public void setNewGausianDistances(List<List<Double>> newGausianDistances) {
+		this.newGausianDistances = newGausianDistances;
+	}
 
 	public GRNN() {
 
@@ -253,19 +273,24 @@ public class GRNN {
 
 	public void setNewSigmas() {
 		double[] gausians = { 0.7, 0.8, 0.9 };
-		List<Double> newSigmas = new ArrayList<Double>();
+		List<List<Double>> newSigmasList = new ArrayList<List<Double>>();
 		for (double gausian : gausians) {
-			double sigma = this.getMinEuklidDistance()
-			/ Math.sqrt(-Math.log(gausian));
-			if(sigma < 0.01){
-				newSigmas.add(0.01);
-			} else {
-				newSigmas.add(sigma);
+			List<Double> newSigmas = new ArrayList<Double>();
+			for (String element : this.minTestVector) {
+				double sigma = Double.parseDouble(element.replace(',', '.'))
+						/ Math.sqrt(-Math.log(gausian));
+				if (sigma < 0.01) {
+					newSigmas.add(0.01);
+				} else {
+					newSigmas.add(sigma);
+				}
 			}
-			
+
+			newSigmasList.add(newSigmas);
+
 		}
-		LOGGER.info("new sigmas: " + newSigmas);
-		this.setNewSigmas(newSigmas);
+		LOGGER.info("new sigmas: " + newSigmasList);
+		this.setNewSigmas(newSigmasList);
 	}
 
 	public String[] getNearestVectorTrain() {
@@ -282,7 +307,38 @@ public class GRNN {
 				}
 			}
 		}
+
 		return this.linesTrainInputMinToTrain.get(listListMinIndex);
+	}
+
+	public void calculateNewGausianDistances() {
+		List<Double> dNearestDistances = new ArrayList<Double>();
+		newGausianDistances = new ArrayList<List<Double>>();
+		LOGGER.info("nearestVector size:" + this.getMinTestVector().length);
+		for (int i = 0; i < 214; i++) {
+			double sum = 0.0;
+			for (int j = 0; j < this.getMinTestVector().length; j++) {
+				sum += Math.pow(
+						Double.parseDouble(this.getMinTestVector()[j].replace(
+								',', '.'))
+								- Double.parseDouble((this.getLinesTrain().get(
+										i)[j]).replace(',', '.')), 2);
+			}
+			dNearestDistances.add(Math.sqrt(sum));
+		}
+
+		for (List<Double> newSigmasVector : this.getNewSigmas()) {
+			List<Double> newGausianDistance = new ArrayList<Double>();
+			for (int i = 0; i < dNearestDistances.size(); i++) {
+				newGausianDistance.add(Math.exp(-(Math.pow(
+						dNearestDistances.get(i), 2) / Math.pow(
+						newSigmasVector.get(i), 2))));	
+			}
+			newGausianDistances.add(newGausianDistance);
+
+		}
+		
+
 	}
 
 	public double getSigma() {
@@ -366,11 +422,11 @@ public class GRNN {
 		this.minEuklidDistance = minEuklidDistance;
 	}
 
-	public List<Double> getNewSigmas() {
+	public List<List<Double>> getNewSigmas() {
 		return newSigmas;
 	}
 
-	public void setNewSigmas(List<Double> newSigmas) {
+	public void setNewSigmas(List<List<Double>> newSigmas) {
 		this.newSigmas = newSigmas;
 	}
 
