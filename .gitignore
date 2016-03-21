@@ -1,0 +1,9 @@
+/target/
+target/
+.idea/
+GRNN.iml
+.settings/
+.project
+.classpath
+
+
