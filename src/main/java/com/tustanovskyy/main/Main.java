@@ -23,9 +23,12 @@ public class Main {
 			fileParser.setSeperator('\t');
 			try {
 				
+//				fileParser
+//						.initializeCSVReaderTest("D:\\ai\\procom_use00.txt");
+//				fileParser.initializeCSVReaderTrain("D:\\ai\\procom_train00.txt");
 				fileParser
-						.initializeCSVReaderTest("D:\\ai\\procom_use00.txt");
-				fileParser.initializeCSVReaderTrain("D:\\ai\\procom_train00.txt");
+				.initializeCSVReaderTest("/home/myroslav/programming/GRNN/procom_use00.txt");
+		fileParser.initializeCSVReaderTrain("/home/myroslav/programming/GRNN/procom_train00.txt");
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

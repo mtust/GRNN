@@ -34,7 +34,8 @@ public class TestGRNN {
 		for (int i = 0; i < 3; i++) {
 			try {
 
-				File file = new File("D:\\ai\\result" + (i + 1));
+//				File file = new File("D:\\ai\\result" + (i + 1));
+				File file = new File("/home/myroslav/programming/GRNN/result" + (i + 1));
 
 				// if file doesnt exists, then create it
 				if (!file.exists()) {
@@ -43,7 +44,8 @@ public class TestGRNN {
 
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
-				for (int k = 0; k < grnn.getLinesTrain().size(); k++) {
+				LOGGER.info("linesTest size: " + grnn.getLinesTest().size());
+				for (int k = 0; k < grnn.getLinesTest().size(); k++) {
 					if (grnn.getNewGausianDistances().get(i).get(k) > 0.0001) {
 						bw.write(i + ". ");
 						for (String vector : grnn.getLinesTrain().get(k)) {

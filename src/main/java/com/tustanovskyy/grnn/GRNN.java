@@ -274,6 +274,7 @@ public class GRNN {
 	public void setNewSigmas() {
 		double[] gausians = { 0.7, 0.8, 0.9 };
 		List<List<Double>> newSigmasList = new ArrayList<List<Double>>();
+		LOGGER.info("minTestVector size: " + this.minTestVector.length);		
 		for (double gausian : gausians) {
 			List<Double> newSigmas = new ArrayList<Double>();
 			for (String element : this.minTestVector) {
@@ -315,27 +316,36 @@ public class GRNN {
 		List<Double> dNearestDistances = new ArrayList<Double>();
 		newGausianDistances = new ArrayList<List<Double>>();
 		LOGGER.info("nearestVector size:" + this.getMinTestVector().length);
-		for (int i = 0; i < 214; i++) {
+		LOGGER.info("minTest vector: " + this.getMinTestVector().length);		
+		
+		
+		for (int i = 0; i < this.getLinesTest().size(); i++) {
 			double sum = 0.0;
 			for (int j = 0; j < this.getMinTestVector().length; j++) {
 				sum += Math.pow(
 						Double.parseDouble(this.getMinTestVector()[j].replace(
 								',', '.'))
-								- Double.parseDouble((this.getLinesTrain().get(
+								- Double.parseDouble((this.getLinesTest().get(
 										i)[j]).replace(',', '.')), 2);
 			}
 			dNearestDistances.add(Math.sqrt(sum));
 		}
 
-		for (List<Double> newSigmasVector : this.getNewSigmas()) {
+		
+		LOGGER.info("size of new sigmas of vector size : " + this.getNewSigmas().get(0).size());
+		LOGGER.info("size of new sigmas vector: " + this.getNewSigmas().size());
+		LOGGER.info("size of dNearestDistance: " + dNearestDistances.size());		
+		int t = 0;
+		for (List<Double> newSigmasVector : this.getNewSigmas()) {			
+			LOGGER.info("newSigmasVectorSize: " + newSigmasVector.size());
 			List<Double> newGausianDistance = new ArrayList<Double>();
 			for (int i = 0; i < dNearestDistances.size(); i++) {
 				newGausianDistance.add(Math.exp(-(Math.pow(
 						dNearestDistances.get(i), 2) / Math.pow(
-						newSigmasVector.get(i), 2))));	
+						newSigmasVector.get(0), 2))));	
 			}
 			newGausianDistances.add(newGausianDistance);
-
+			t++;
 		}
 		
 
